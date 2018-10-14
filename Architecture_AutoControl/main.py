@@ -1,0 +1,3 @@
+import prioritization
+
+prioritization.main()
