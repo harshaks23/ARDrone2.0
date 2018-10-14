@@ -1,0 +1,24 @@
+package ParrotAR2DroneSensorData;
+
+message SensorData {
+  optional int64 unix_time = 1;
+
+  optional int32 battery = 2;
+  optional int32 altitude = 3;
+  optional int32 pitch = 4;
+  optional int32 roll = 5;
+  optional int32 yaw = 6;
+  optional double vx = 7;
+  optional double vy = 8;
+  optional double vz = 9;
+
+  optional int32 fly = 10;
+
+  message ImageData {
+    optional int32 width = 1;
+    optional int32 height = 2;
+    optional bytes image_data = 3;
+  }
+
+  repeated ImageData images = 11;
+}

@@ -1,0 +1,11 @@
+import ardrone
+
+drone = ardrone.ARDrone()
+
+print(drone.image)
+
+from PIL import IMAGE
+
+open_cv_image = numpy.array(open_cv_image = open_cv_image[:, :, ::-1].copy() ) 
+open_cv_image = open_cv_image[:, :, ::-1].copy() 
+

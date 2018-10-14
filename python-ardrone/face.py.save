@@ -1,0 +1,12 @@
+import cv2
+
+detector=cv2.CascadeClassifier('face.xml')
+i=0
+offset=50
+Id=raw_input('enter your id: ')
+sampleNum=0
+
+cam = cv2.VideoCapture(0)
+detector=cv2.CascadeClassifier('face.xml')
+i=0
+offset=50
