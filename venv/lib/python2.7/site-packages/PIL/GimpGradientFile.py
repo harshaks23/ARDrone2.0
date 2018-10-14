@@ -14,7 +14,7 @@
 #
 
 from math import pi, log, sin, sqrt
-from ._binary import o8
+from PIL._binary import o8
 
 # --------------------------------------------------------------------
 # Stuff to translate curve segments to palette values (derived from
@@ -54,7 +54,6 @@ def sphere_increasing(middle, pos):
 
 def sphere_decreasing(middle, pos):
     return 1.0 - sqrt(1.0 - linear(middle, pos) ** 2)
-
 
 SEGMENTS = [linear, curved, sine, sphere_increasing, sphere_decreasing]
 

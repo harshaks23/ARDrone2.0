@@ -27,11 +27,28 @@ cascadePath = "face.xml"
 
 # Create classifier from prebuilt model
 faceCascade = cv2.CascadeClassifier(cascadePath);
+def twillo():
+    
 
+
+    # Your Account Sid and Auth Token from twilio.com/console
+    account_sid = 'AC12446ff63d16f5749cf9d3d59c0465dc'
+    auth_token = '77672a18715f646025afea018ef1094d'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages \
+                    .create(
+                         body="harsha, Male chicago.",
+                         from_='+1(312) 471-0558',
+                         to='+13123588613'
+                     )
+
+    print(message.sid)
+# Loop
 # Set the font style
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-
+x=1
 # Loop
 while True:
     # Read the video frame
@@ -57,6 +74,11 @@ while True:
         print(Id)
         # Check the ID if exist 
         if(Id == 1):
+	    
+            if(x==1):
+		
+                twillo()
+                x=2
             print("hi")
             Id = "harsha {0:.2f}%".format(round(100 - confidence, 2))
         elif(Id == 2):
@@ -73,4 +95,8 @@ while True:
     # If 'q' is pressed, close program
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
+
+drone.halt()
+cv2.destroyAllWindows()
+
 

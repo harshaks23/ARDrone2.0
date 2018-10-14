@@ -1,0 +1,3 @@
+from clarifai.rest import ClarifaiApp
+app = ClarifaiApp(api_key='17753bdb90634132b07b44f247d3fd03')
+app = ClarifaiApp()

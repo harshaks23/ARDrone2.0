@@ -11,10 +11,27 @@ import time
 import cv2,numpy,os
 import parse_sensor_data 
 import ardrone
-
+from twilio.rest import Client
 from PIL import Image
 
 
+def twillo():
+    
+
+
+    # Your Account Sid and Auth Token from twilio.com/console
+    account_sid = 'AC12446ff63d16f5749cf9d3d59c0465dc'
+    auth_token = '77672a18715f646025afea018ef1094d'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages \
+                    .create(
+                         body="harsha, Male chicago.",
+                         from_='+1(312) 471-0558',
+                         to='+13123588613'
+                     )
+
+    print(message.sid)
 
 def assure_path_exists(path):
     dir = os.path.dirname(path)
@@ -100,6 +117,7 @@ while True:
 		# extract the confidence (i.e., probability) associated with
 		# the prediction
 		confidence = detections[0, 0, i, 2]
+		print("a")
 
 		# filter out weak detections by ensuring the `confidence` is
 		# greater than the minimum confidence
@@ -131,10 +149,14 @@ while True:
 	        print(Id)
 	        # Check the ID if exist 
 	        if(Id == 1):
-	            print("hi")
+	    
+            	    if(x==1):
+			twillo()
+ 	              	x=2
+
 	            Id = "harsha {0:.2f}%".format(round(100 - confidence, 2))
 	        elif(Id == 2):
-	            print("hi")
+	           
 	            Id = "b {0:.2f}%".format(round(100 - confidence, 2))
 
 		        # Put text describe who is in the picture

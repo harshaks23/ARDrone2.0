@@ -8,14 +8,40 @@ import numpy as np
 import argparse
 import imutils
 import time
-import cv2,numpy
+import cv2,numpy,os
 import parse_sensor_data 
 import ardrone
 
 from PIL import Image
 
+from twilio.rest import Client
 
+# Your Account Sid and Auth Token from twilio.com/console
+account_sid = 'AC12446ff63d16f5749cf9d3d59c0465dc'
+auth_token = '77672a18715f646025afea018ef1094d'
+#client = Client(account_sid, auth_token)
 
+def assure_path_exists(path):
+    dir = os.path.dirname(path)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+# Create Local Binary Patterns Histograms for face recognization
+recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+assure_path_exists("trainer/")
+
+# Load the trained mode
+recognizer.read('trainer/trainer.yml')
+
+# Load prebuilt model for Frontal Face
+cascadePath = "face.xml"
+
+# Create classifier from prebuilt model
+faceCascade = cv2.CascadeClassifier(cascadePath);
+
+# Set the font style
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -46,6 +72,8 @@ vs = VideoStream(src=0).start()
 time.sleep(2.0)
 fps = FPS().start()
 
+h_c=0
+j_c=0
 # loop over the frames from the video stream
 while True:
 	# grab the frame from the threaded video stream and resize it
@@ -53,15 +81,21 @@ while True:
 	
 	#frame=vs.read()	
 	frame = parse_sensor_data.drone.image
+	
 	open_cv_image =numpy.array(frame)
 	
 	frame =open_cv_image[:,:,::-1].copy()
-	frame = imutils.resize(frame, width=400)
+	im=frame# Convert the captured frame into grayscale
+    	gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
+
+    	# Get all face from the video frame
+    	faces=faceCascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=(100, 100), flags=cv2.CASCADE_SCALE_IMAGE)
+	frame = imutils.resize(frame, width=650)
 
 	# grab the frame dimensions and convert it to a blob
 	(h, w) = frame.shape[:2]
-	blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)),
-		0.007843, (300, 300), 127.5)
+	blob = cv2.dnn.blobFromImage(cv2.resize(frame, (650, 650)),
+		0.007843, (650, 650), 127.5)
 
 	# pass the blob through the network and obtain the detections and
 	# predictions
@@ -95,7 +129,50 @@ while True:
 
 	# show the output frame
 	cv2.imshow("Frame", frame)
-	key = cv2.waitKey(1) & 0xFF
+	for(x,y,w,h) in faces:
+		# Create rectangle around the face
+	        cv2.rectangle(im, (x-20,y-20), (x+w+20,y+h+20), (0,255,0), 4)
+
+	        # Recognize the face belongs to which ID
+	        Id, confidence = recognizer.predict(gray[y:y+h,x:x+w])
+	        print(Id)
+	        # Check the ID if exist 
+	        if(Id == 1):
+		 #   if(h_c==0):
+		#	message = client.messages \
+                #.create(
+                     #body="We found harsha from chicago",
+                     #from_='+1(312) 471-0558',
+                     #to='+13123588613'
+                 #)
+
+			#print(message.sid)
+			#h_c=1
+
+
+
+	            Id = "harsha ,Male,chicago {0:.2f}%".format(round(100 - confidence, 2))
+	        elif(Id == 2):
+		    #if(j_c==0):
+			#message = client.messages \
+                #.create(
+                #     body="We found jonathan from champaign",
+                 #    from_='+1(312) 471-0558',
+                  #   to='+13123588613'
+                 #)
+
+		#	print(message.sid)
+		#	j_c=1
+
+	            Id = "jonathan,Male Urbana champaign{0:.2f}%".format(round(100 - confidence, 2))
+
+		        # Put text describe who is in the picture
+	        cv2.rectangle(im, (x-22,y-90), (x+w+22, y-22), (0,255,0), -1)
+	        cv2.putText(im, str(Id), (x,y-40), font, 1, (255,255,255), 3)
+
+	cv2.imshow("Person ", im)
+	key = cv2.waitKey(100) & 0xFF
+	
 
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q"):

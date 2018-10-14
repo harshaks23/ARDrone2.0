@@ -16,7 +16,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image, ImageColor, ImageDraw, ImageFont, ImagePath
+from PIL import Image, ImageColor, ImageDraw, ImageFont, ImagePath
 
 
 class Pen(object):
@@ -97,6 +97,9 @@ class Draw(object):
 
     def rectangle(self, xy, *options):
         self.render("rectangle", xy, *options)
+
+    def symbol(self, xy, symbol, *options):
+        raise NotImplementedError("not in this version")
 
     def text(self, xy, text, font):
         if self.transform:
